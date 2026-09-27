@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NammaBite | Next-Gen Online Food Ordering & Delivery Platform</title>
+  <meta name="description" content="Production-ready multi-role Online Food Ordering System with Live Order Tracking, Payment Simulator, Restaurant Partner Dashboard, and Super Admin Management.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Top Announcement Promo Bar -->
+  <div class="top-promo-bar">
+    <div class="promo-content">
+      <span class="badge-fire">🔥 OFFER</span>
+      <span>Get <strong>50% FLAT OFF</strong> on your first order! Use code <strong class="coupon-chip" onclick="copyCoupon('FIRST50')">FIRST50</strong></span>
+      <span class="divider">•</span>
+      <span>Free delivery above ₹299 with code <strong class="coupon-chip" onclick="copyCoupon('FREESHIP')">FREESHIP</strong></span>
+    </div>
+    <div class="promo-quick-contact">
+      <span>⚡ 30 Min Express Delivery Guarantee</span>
+    </div>
+  </div>
+
+  <!-- Role Switcher Demo Control Banner (Portfolio Special) -->
+  <header class="role-switcher-banner">
+    <div class="role-switcher-container">
+      <div class="demo-info">
+        <span class="pulse-indicator"></span>
+        <span class="demo-tag">PORTFOLIO DEMO SUITE</span>
+        <span class="demo-desc">Switch modules to experience the full end-to-end ecosystem:</span>
+      </div>
+      <div class="role-nav-pills" id="rolePills">
+        <button class="role-btn active" data-role="customer" onclick="switchRole('customer')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Customer App
+        </button>
+        <button class="role-btn" data-role="restaurant" onclick="switchRole('restaurant')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+          Restaurant Partner
+          <span class="role-badge-count" id="partnerOrderBadge">0</span>
+        </button>
+        <button class="role-btn" data-role="admin" onclick="switchRole('admin')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          Super Admin
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Navigation Bar -->
+  <nav class="main-navbar">
+    <div class="nav-container">
+      <!-- Brand Logo -->
+      <div class="nav-brand" onclick="navigateToCustomerHome()">
+        <div class="brand-logo-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">Namma<span class="highlight">Bite</span></span>
+          <span class="brand-tagline">Eat Good • Feel Good</span>
+        </div>
+      </div>
+
+      <!-- Location Selector -->
+      <div class="location-picker">
+        <svg class="icon map-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <div class="location-meta">
+          <span class="location-label">Delivering to</span>
+          <select id="userLocationSelect" onchange="changeDeliveryLocation(this.value)">
+            <option value="Anna Nagar, Chennai">Anna Nagar, Chennai (Tamil Nadu)</option>
+            <option value="T. Nagar, Chennai">T. Nagar, Chennai</option>
+            <option value="Indiranagar, Bangalore">Indiranagar, Bengaluru</option>
+            <option value="Koramangala, Bangalore">Koramangala, Bengaluru</option>
+            <option value="Bandra West, Mumbai">Bandra West, Mumbai</option>
+            <option value="Madhapur, Hyderabad">Madhapur, Hyderabad</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Live Search Bar -->
+      <div class="search-box-wrapper" id="navSearchBox">
+        <!-- <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21 21-4.3-4.3"/><circle cx="11" cy="11" r="8"/></svg> -->
+      <svg 
+  class="search-icon" 
+  viewBox="0 0 24 24" 
+  fill="none" 
+  stroke="currentColor" 
+  stroke-width="2" 
+  width="16" 
+  height="16"
+>
+  <path d="m21 21-4.3-4.3"/>
+  <circle cx="11" cy="11" r="8"/>
+</svg>
+
+
+        <input type="text" id="globalSearchInput" placeholder="Search for Biryani, Pizza, Thalappakatti, Burgers..." oninput="handleSearch(this.value)">
+        <button class="clear-search-btn" id="clearSearchBtn" onclick="clearSearch()" style="display:none;">✕</button>
+      </div>
+    
+
+      <!-- Right Navigation Actions -->
+      <div class="nav-actions">
+        <!-- Live Order Tracking Quick Nav (If Active Order Exists) -->
+        <button class="nav-btn tracking-pill-btn" id="liveTrackingNavBtn" onclick="showOrderTrackingView()" style="display: none;">
+          <span class="radar-dot"></span>
+          <span>Track Order</span>
+        </button>
+
+        <!-- User Authentication Button -->
+        <div class="user-auth-wrapper">
+          <button class="nav-btn user-btn" id="authBtn" onclick="toggleAuthModal()">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span id="authBtnText">Login / Sign In</span>
+          </button>
+          <!-- User Dropdown Menu -->
+          <div class="user-dropdown-menu" id="userDropdown">
+            <div class="user-dropdown-header">
+              <strong id="dropdownUserName">Karthik Raja</strong>
+              <small id="dropdownUserEmail">karthik@example.com</small>
+            </div>
+            <hr>
+            <a href="#" onclick="showOrderHistoryModal(); return false;">📋 Order History</a>
+            <a href="#" onclick="showSavedAddresses(); return false;">📍 Saved Addresses</a>
+            <a href="#" onclick="switchRole('restaurant'); return false;">🍳 Restaurant Dashboard</a>
+            <a href="#" onclick="switchRole('admin'); return false;">🛡️ Super Admin Control</a>
+            <hr>
+            <a href="#" onclick="handleLogout(); return false;" class="text-danger">🚪 Logout</a>
+          </div>
+        </div>
+
+        <!-- Floating Cart Trigger Button -->
+        <button class="nav-btn cart-btn" id="navCartBtn" onclick="openCartDrawer()">
+          <div class="cart-icon-wrap">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+            <span class="cart-badge-count" id="cartCountBadge">0</span>
+          </div>
+          <div class="cart-btn-info">
+            <span class="cart-label">Cart</span>
+            <span class="cart-total-price" id="cartTotalNav">₹0</span>
+          </div>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========================================================================= -->
+  <!-- MODULE 1: CUSTOMER VIEW                                                   -->
+  <!-- ========================================================================= -->
+  <main class="app-module active-module" id="module-customer">
+    
+    <!-- Hero / Promotional Carousel Section -->
+    <section class="hero-promo-section">
+      <div class="hero-container">
+        <div class="promo-card promo-gradient-1">
+          <div class="promo-text">
+            <span class="promo-sub">WEEKEND CRAVINGS</span>
+            <h2>Authentic Dum Biryani Fest</h2>
+            <p>Flat 50% discount on Top Rated South Indian & Hyderabadi Biryani pots!</p>
+            <div class="promo-cta">
+              <button class="btn btn-white" onclick="filterByCategory('Biryani')">Order Biryani Now →</button>
+              <span class="code-tag">Code: <strong>FIRST50</strong></span>
+            </div>
+          </div>
+          <div class="promo-illustration">
+            <div class="dish-badge-circle">
+              <span class="badge-emoji">🍗</span>
+              <span class="badge-label">Hot & Spicy</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="promo-card promo-gradient-2">
+          <div class="promo-text">
+            <span class="promo-sub">GOURMET SPECIALS</span>
+            <h2>Artisanal Stone-Baked Pizzas</h2>
+            <p>Loaded mozzarella, farm fresh basil, authentic Italian crust.</p>
+            <div class="promo-cta">
+              <button class="btn btn-white" onclick="filterByCategory('Pizzas')">Explore Pizzas →</button>
+              <span class="code-tag">Code: <strong>TASTY20</strong></span>
+            </div>
+          </div>
+          <div class="promo-illustration">
+            <div class="dish-badge-circle">
+              <span class="badge-emoji">🍕</span>
+              <span class="badge-label">Chef Handcrafted</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Category Explorer -->
+    <section class="categories-section">
+      <div class="section-container">
+        <div class="section-header">
+          <div class="title-with-badge">
+            <h2>Explore Popular Cuisines</h2>
+            <span class="subtext">Craving something delicious? Pick a category below</span>
+          </div>
+        </div>
+
+        <div class="category-scroll-list" id="categoryList">
+          <div class="category-item active" onclick="filterByCategory('All')">
+            <div class="category-icon-circle">🍽️</div>
+            <span>All Dishes</span>
+          </div>
+          <div class="category-item" onclick="filterByCategory('Biryani')">
+            <div class="category-icon-circle">🍗</div>
+            <span>Biryani</span>
+          </div>
+          <div class="category-item" onclick="filterByCategory('Pizzas')">
+            <div class="category-icon-circle">🍕</div>
+            <span>Pizzas</span>
+          </div>
+          <div class="category-item" onclick="filterByCategory('Burgers')">
+            <div class="category-icon-circle">🍔</div>
+            <span>Burgers</span>
+          </div>
+          <div class="category-item" onclick="filterByCategory('South Indian')">
+            <div class="category-icon-circle">🥘</div>
+            <span>South Indian</span>
+          </div>
+          <div class="category-item" onclick="filterByCategory('Chinese')">
+            <div class="category-icon-circle">🥟</div>
+            <span>Chinese</span>
+          </div>
+          <div class="category-item" onclick="filterByCategory('Desserts')">
+            <div class="category-icon-circle">🍨</div>
+            <span>Desserts</span>
+          </div>
+          <div class="category-item" onclick="filterByCategory('Healthy')">
+            <div class="category-icon-circle">🥗</div>
+            <span>Healthy & Bowls</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filter & Sort Bar -->
+    <section class="filters-bar-section">
+      <div class="section-container filters-flex">
+        <!-- Quick Toggle Badges -->
+        <div class="filter-badges-left">
+          <button class="filter-chip" id="filterVegOnly" onclick="toggleVegOnlyFilter()">
+            <span class="veg-dot-icon"></span>
+            <span>Pure Veg</span>
+          </button>
+          <button class="filter-chip" id="filterRating4" onclick="toggleRatingFilter()">
+            <span>★ 4.2+ Rated</span>
+          </button>
+          <button class="filter-chip" id="filterFastDelivery" onclick="toggleFastDeliveryFilter()">
+            <span>⚡ Under 30 mins</span>
+          </button>
+          <button class="filter-chip" id="filterOffers" onclick="toggleOffersFilter()">
+            <span>🏷️ Great Offers</span>
+          </button>
+        </div>
+
+        <!-- Sorting Dropdown -->
+        <div class="sort-wrapper-right">
+          <label for="sortBySelect">Sort by:</label>
+          <select id="sortBySelect" onchange="applySorting(this.value)">
+            <option value="relevance">Relevance & Popularity</option>
+            <option value="rating">Rating: High to Low</option>
+            <option value="deliveryTime">Delivery Time: Fastest</option>
+            <option value="costLow">Cost: Low to High</option>
+            <option value="costHigh">Cost: High to Low</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Restaurant Grid Section -->
+    <section class="restaurants-section">
+      <div class="section-container">
+        <div class="section-header">
+          <div>
+            <h2 id="restaurantSectionTitle">Top Restaurants in Chennai</h2>
+            <span class="subtext" id="restaurantCountSubtext">Showing verified restaurants serving your area</span>
+          </div>
+          <div class="status-summary-badge">
+            <span class="live-dot"></span> Live Kitchens Open
+          </div>
+        </div>
+
+        <!-- Restaurant Cards Grid -->
+        <div class="restaurants-grid" id="restaurantsGrid">
+          <!-- Populated dynamically via app.js -->
+        </div>
+
+        <!-- Empty Results Placeholder -->
+        <div class="empty-state" id="emptyRestaurantState" style="display: none;">
+          <div class="empty-icon">🔍</div>
+          <h3>No restaurants found matching your criteria</h3>
+          <p>Try resetting your filters or search keywords to view delicious options.</p>
+          <button class="btn btn-primary" onclick="resetAllFilters()">Reset All Filters</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- RESTAURANT MENU DETAIL MODAL / VIEW (Customer clicks restaurant card)     -->
+  <!-- ========================================================================= -->
+  <div class="menu-modal-overlay" id="restaurantMenuModal">
+    <div class="menu-modal-dialog">
+      <!-- Modal Close Button -->
+      <button class="modal-close-btn" onclick="closeRestaurantMenuModal()">✕</button>
+
+      <!-- Restaurant Header Banner -->
+      <div class="restaurant-hero-header" id="modalRestaurantHero">
+        <div class="hero-overlay"></div>
+        <div class="hero-details">
+          <div class="hero-cuisine-tag" id="modalRestCuisine">Biryani, Chettinad, Mughlai</div>
+          <h1 id="modalRestName">Thalappakatti Royal Biryani</h1>
+          <p class="modal-rest-location" id="modalRestAddress">📍 2nd Avenue, Anna Nagar, Chennai</p>
+          
+          <div class="modal-rest-meta-row">
+            <div class="meta-item rating-pill">
+              <span class="star-icon">★</span>
+              <strong id="modalRestRating">4.6</strong>
+              <span class="rating-count" id="modalRestReviewCount">(1.2k+ reviews)</span>
+            </div>
+            <div class="meta-item">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <span id="modalRestTime">25-30 mins</span>
+            </div>
+            <div class="meta-item">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              <span id="modalRestCost">₹350 for two</span>
+            </div>
+            <div class="meta-item offer-badge" id="modalRestOffer">
+              🎉 50% OFF up to ₹100
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Menu Categories Tabs & Search Inside Restaurant -->
+      <div class="menu-controls-bar">
+        <div class="menu-category-pills" id="modalCategoryPills">
+          <!-- Dynamically populated categories -->
+        </div>
+        <div class="menu-search-wrap">
+          <input type="text" id="menuItemSearchInput" placeholder="Search menu dishes..." oninput="handleMenuSearch(this.value)">
+        </div>
+      </div>
+
+      <!-- Dish List Container -->
+      <div class="menu-dishes-body" id="modalDishesContainer">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- LIVE ORDER TRACKING MODAL / VIEW (Live animated route map + Stepper)      -->
+  <!-- ========================================================================= -->
+  <div class="tracking-modal-overlay" id="orderTrackingModal">
+    <div class="tracking-modal-dialog">
+      <div class="tracking-header">
+        <div class="tracking-header-left">
+          <span class="tracking-live-tag"><span class="pulse-indicator"></span> LIVE ORDER TRACKING</span>
+          <h2 id="trackOrderId">Order #ZB-84920</h2>
+          <span class="order-time-stamp" id="trackOrderTime">Placed Today at 1:45 PM</span>
+        </div>
+        <div class="tracking-header-right">
+          <button class="btn btn-outline-sm" onclick="printInvoice()">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+            Tax Invoice
+          </button>
+          <button class="modal-close-btn-rel" onclick="closeOrderTrackingModal()">✕</button>
+        </div>
+      </div>
+
+      <div class="tracking-content-grid">
+        <!-- Left: Interactive Simulated Map & Rider Progress -->
+        <div class="tracking-map-panel">
+          <div class="eta-banner">
+            <div class="eta-icon">🛵</div>
+            <div class="eta-details">
+              <span class="eta-title">Estimated Delivery Time</span>
+              <strong class="eta-time" id="trackEtaTimer">22 mins (Arriving by 2:15 PM)</strong>
+            </div>
+            <div class="demo-fast-forward">
+              <button class="btn btn-sm btn-accent" onclick="simulateNextOrderStatus()">
+                ⏩ Fast-Forward Status (Demo)
+              </button>
+            </div>
+          </div>
+
+          <!-- Dynamic SVG Simulated Delivery Map -->
+          <div class="simulated-map-container" id="mapContainer">
+            <svg class="live-map-canvas" id="deliveryMapSvg" viewBox="0 0 600 320">
+              <!-- Grid Roads / Buildings Mockup -->
+              <rect width="600" height="320" fill="#f8fafc"/>
+              <g stroke="#e2e8f0" stroke-width="2">
+                <line x1="0" y1="60" x2="600" y2="60" />
+                <line x1="0" y1="140" x2="600" y2="140" />
+                <line x1="0" y1="220" x2="600" y2="220" />
+                <line x1="0" y1="280" x2="600" y2="280" />
+                <line x1="80" y1="0" x2="80" y2="320" />
+                <line x1="180" y1="0" x2="180" y2="320" />
+                <line x1="320" y1="0" x2="320" y2="320" />
+                <line x1="440" y1="0" x2="440" y2="320" />
+                <line x1="540" y1="0" x2="540" y2="320" />
+              </g>
+
+              <!-- Delivery Path Road (Dotted line & Active Line) -->
+              <path id="routeBackgroundPath" d="M 90 220 L 180 220 L 180 140 L 320 140 L 320 60 L 520 60" 
+                    fill="none" stroke="#cbd5e1" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path id="routeActivePath" d="M 90 220 L 180 220 L 180 140 L 320 140 L 320 60 L 520 60" 
+                    fill="none" stroke="#10b981" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"
+                    stroke-dasharray="700" stroke-dashoffset="400"/>
+
+              <!-- Start Marker: Restaurant -->
+              <g transform="translate(90, 220)">
+                <circle r="18" fill="#ef4444" />
+                <text x="0" y="5" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold">🍳</text>
+                <text x="0" y="32" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="600" id="mapRestLabel">Kitchen</text>
+              </g>
+
+              <!-- End Marker: Customer Home -->
+              <g transform="translate(520, 60)">
+                <circle r="18" fill="#3b82f6" />
+                <text x="0" y="5" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold">🏠</text>
+                <text x="0" y="32" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="600">Your Home</text>
+              </g>
+
+              <!-- Moving Rider Delivery Bike Marker -->
+              <g id="riderMarker" transform="translate(250, 140)">
+                <circle r="22" fill="#10b981" fill-opacity="0.3" class="pulse-circle"/>
+                <circle r="14" fill="#0f172a" />
+                <text x="0" y="5" text-anchor="middle" fill="#fff" font-size="12">🛵</text>
+              </g>
+            </svg>
+            <div class="map-status-overlay">
+              <span class="live-ping"></span>
+              <span id="mapLiveStatusText">Driver is heading towards your location</span>
+            </div>
+          </div>
+
+          <!-- Rider Contact & Vehicle Card -->
+          <div class="rider-info-card">
+            <div class="rider-avatar">
+              
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Delivery Partner" id="riderPhoto" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><circle cx="30" cy="30" r="30" fill="%23f97316"/><text x="30" y="38" font-size="24" text-anchor="middle" fill="%23fff">🛵</text></svg>'">
+            </div>
+            <div class="rider-meta">
+              <div class="rider-name-row">
+                <h4 id="riderName">Karthik R.</h4>
+                <span class="rider-rating">★ 4.9 (1.4k deliveries)</span>
+              </div>
+              <p class="rider-vehicle" id="riderVehicle">TVS Apache • TN-09-BK-4291</p>
+              <div class="rider-safety-tag">🛡️ Triple vaccinated & temperature checked</div>
+            </div>
+            <div class="rider-actions">
+              <button class="btn btn-icon-round" onclick="showToast('Calling delivery partner Karthik (+91 98401 23456)...', 'info')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: 5-Stage Stepper & Order Summary -->
+        <div class="tracking-status-panel">
+          <h3>Delivery Progress</h3>
+
+          <div class="status-stepper" id="trackingStepper">
+            <!-- Step 1 -->
+            <div class="step-item completed" id="step-placed">
+              <div class="step-icon-wrap">✓</div>
+              <div class="step-text">
+                <strong>Order Placed & Confirmed</strong>
+                <p>Restaurant has accepted your order</p>
+                <small class="step-time" id="time-placed">1:45 PM</small>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step-item completed active-step" id="step-preparing">
+              <div class="step-icon-wrap">🍳</div>
+              <div class="step-text">
+                <strong>Kitchen is Preparing your Feast</strong>
+                <p>Fresh ingredients, cooking with hygiene</p>
+                <small class="step-time" id="time-preparing">1:47 PM</small>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-item" id="step-assigned">
+              <div class="step-icon-wrap">👤</div>
+              <div class="step-text">
+                <strong>Delivery Partner Assigned</strong>
+                <p>Rider has arrived at the restaurant</p>
+                <small class="step-time" id="time-assigned">Pending</small>
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="step-item" id="step-out">
+              <div class="step-icon-wrap">🛵</div>
+              <div class="step-text">
+                <strong>Out for Delivery</strong>
+                <p>Food picked up, rider on the way to you</p>
+                <small class="step-time" id="time-out">Pending</small>
+              </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="step-item" id="step-delivered">
+              <div class="step-icon-wrap">🎉</div>
+              <div class="step-text">
+                <strong>Order Delivered</strong>
+                <p>Enjoy your meal! Please rate your experience</p>
+                <small class="step-time" id="time-delivered">Pending</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order Summary Card -->
+          <div class="track-order-summary-card">
+            <h4>Order Items (<span id="trackItemCount">2 items</span>)</h4>
+            <div class="track-items-list" id="trackItemsList">
+              <!-- Populated dynamically -->
+            </div>
+            <div class="track-bill-row">
+              <span>Paid Total:</span>
+              <strong id="trackBillTotal">₹485.00</strong>
+            </div>
+            <div class="track-delivery-address">
+              <small>📍 Delivery Address:</small>
+              <p id="trackAddressText">Flat 402, Royal Palms, 2nd Avenue, Anna Nagar, Chennai</p>
+            </div>
+            <div class="track-actions-row">
+              <button class="btn btn-sm btn-outline" onclick="openReviewModal()">⭐ Rate Restaurant</button>
+              <button class="btn btn-sm btn-danger-outline" onclick="cancelCurrentOrder()">Cancel Order</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- CART SLIDE-OVER DRAWER                                                    -->
+  <!-- ========================================================================= -->
+  <div class="cart-drawer-overlay" id="cartDrawerOverlay" onclick="closeCartDrawer(event)">
+    <div class="cart-drawer-content" onclick="event.stopPropagation()">
+      <div class="cart-drawer-header">
+        <div class="drawer-title">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          <h3>Your Food Cart</h3>
+          <span class="cart-rest-tag" id="cartRestaurantName">Thalappakatti Royal Biryani</span>
+        </div>
+        <button class="drawer-close-btn" onclick="closeCartDrawer()">✕</button>
+      </div>
+
+      <!-- Empty Cart Body -->
+      <div class="cart-empty-body" id="cartEmptyView" style="display: none;">
+        <div class="empty-cart-art">🛒</div>
+        <h4>Your cart is empty!</h4>
+        <p>Good food is always just a few clicks away. Explore top restaurants and add delicious items.</p>
+        <button class="btn btn-primary" onclick="closeCartDrawer()">Browse Restaurants</button>
+      </div>
+
+      <!-- Non-Empty Cart Body -->
+      <div class="cart-scroll-body" id="cartFilledView">
+        <!-- Cart Items List -->
+        <div class="cart-items-list" id="cartItemsList">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Cooking / Delivery Notes -->
+        <div class="cart-section-box">
+          <label class="section-label">👨‍🍳 Cooking or Delivery Instructions:</label>
+          <input type="text" id="cartOrderNotes" placeholder="e.g. Less spicy, keep extra mint chutney, ring bell...">
+        </div>
+
+        <!-- Coupon Code Box -->
+        <div class="cart-section-box coupon-box">
+          <label class="section-label">🏷️ Apply Promo / Coupon Code:</label>
+          <div class="coupon-input-group">
+            <input type="text" id="couponCodeInput" placeholder="Enter coupon (e.g. FIRST50)" uppercase>
+            <button class="btn btn-accent" onclick="applyCouponCode()">Apply</button>
+          </div>
+          <div class="applied-coupon-pill" id="appliedCouponPill" style="display: none;">
+            <span>Code <strong><span id="appliedCouponName"></span></strong> applied!</span>
+            <button class="remove-coupon-btn" onclick="removeCoupon()">✕</button>
+          </div>
+          <div class="coupon-suggestions">
+            <span class="coupon-tag-sm" onclick="quickApplyCoupon('FIRST50')">FIRST50 (50% OFF)</span>
+            <span class="coupon-tag-sm" onclick="quickApplyCoupon('TASTY20')">TASTY20 (20% OFF)</span>
+            <span class="coupon-tag-sm" onclick="quickApplyCoupon('FREESHIP')">FREESHIP (Free Delivery)</span>
+          </div>
+        </div>
+
+        <!-- Tip Delivery Partner -->
+        <div class="cart-section-box">
+          <label class="section-label">🚴 Tip your delivery rider:</label>
+          <div class="tip-options">
+            <button class="tip-btn" onclick="setRiderTip(0, this)">None</button>
+            <button class="tip-btn active" onclick="setRiderTip(20, this)">₹20</button>
+            <button class="tip-btn" onclick="setRiderTip(30, this)">₹30</button>
+            <button class="tip-btn" onclick="setRiderTip(50, this)">₹50</button>
+          </div>
+        </div>
+
+        <!-- Bill Details Summary -->
+        <div class="cart-bill-summary">
+          <h4>Bill Details</h4>
+          <div class="bill-row">
+            <span>Item Subtotal</span>
+            <span id="billSubtotal">₹0</span>
+          </div>
+          <div class="bill-row">
+            <span>Delivery Partner Fee</span>
+            <span id="billDeliveryFee">₹35</span>
+          </div>
+          <div class="bill-row">
+            <span>Platform Fee</span>
+            <span id="billPlatformFee">₹5</span>
+          </div>
+          <div class="bill-row">
+            <span>Govt. Taxes & GST (5%)</span>
+            <span id="billGst">₹0</span>
+          </div>
+          <div class="bill-row tip-row" id="billTipRow">
+            <span>Rider Tip</span>
+            <span id="billTip">₹20</span>
+          </div>
+          <div class="bill-row discount-row" id="billDiscountRow" style="display: none;">
+            <span>Coupon Discount</span>
+            <span class="text-green" id="billDiscount">-₹0</span>
+          </div>
+          <hr>
+          <div class="bill-row bill-grand-total">
+            <strong>To Pay</strong>
+            <strong class="total-amount" id="billGrandTotal">₹0</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cart Drawer Footer Checkout Button -->
+      <div class="cart-drawer-footer" id="cartFooter">
+        <div class="footer-address-preview">
+          <span>Deliver to: <strong id="cartDeliveryAddressLabel">Anna Nagar, Chennai</strong></span>
+        </div>
+        <button class="btn btn-primary btn-block checkout-cta" onclick="openPaymentModal()">
+          <span>Proceed to Pay</span>
+          <span id="checkoutCtaAmount">₹0</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- PAYMENT GATEWAY MODAL (UPI, Cards, Wallets, COD Simulator)                -->
+  <!-- ========================================================================= -->
+  <div class="payment-modal-overlay" id="paymentModal">
+    <div class="payment-modal-dialog">
+      <div class="payment-modal-header">
+        <div class="ssl-secure-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+          <span>256-Bit SSL Encrypted Checkout</span>
+        </div>
+        <button class="modal-close-btn-rel" onclick="closePaymentModal()">✕</button>
+      </div>
+
+      <div class="payment-modal-body">
+        <div class="payment-total-banner">
+          <div>
+            <span class="pay-label">Total Amount to Pay</span>
+            <h2 id="paymentModalTotal">₹485.00</h2>
+          </div>
+          <div class="pay-rest-badge" id="paymentModalRestName">Thalappakatti Biryani</div>
+        </div>
+
+        <!-- Payment Method Tabs -->
+        <div class="payment-tabs-container">
+          <div class="payment-tabs-nav">
+            <button class="pay-tab-btn active" onclick="switchPayTab('upi', this)">
+              <span class="tab-icon">⚡</span>
+              <span>UPI & QR</span>
+            </button>
+            <button class="pay-tab-btn" onclick="switchPayTab('card', this)">
+              <span class="tab-icon">💳</span>
+              <span>Cards</span>
+            </button>
+            <button class="pay-tab-btn" onclick="switchPayTab('wallets', this)">
+              <span class="tab-icon">👛</span>
+              <span>Wallets / NetBanking</span>
+            </button>
+            <button class="pay-tab-btn" onclick="switchPayTab('cod', this)">
+              <span class="tab-icon">💵</span>
+              <span>Cash on Delivery</span>
+            </button>
+          </div>
+
+          <!-- Payment Tab 1: UPI -->
+          <div class="pay-tab-content active" id="payTab-upi">
+            <div class="upi-apps-row">
+              <label class="radio-card active">
+                <input type="radio" name="upiOption" value="gpay" checked>
+                <div class="radio-card-content">
+                  <span class="upi-logo">🔵</span>
+                  <span>Google Pay</span>
+                </div>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="upiOption" value="phonepe">
+                <div class="radio-card-content">
+                  <span class="upi-logo">🟣</span>
+                  <span>PhonePe</span>
+                </div>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="upiOption" value="paytm">
+                <div class="radio-card-content">
+                  <span class="upi-logo">🔷</span>
+                  <span>Paytm UPI</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="upi-id-form">
+              <label>Or enter any Virtual Payment Address (VPA / UPI ID):</label>
+              <div class="upi-input-wrap">
+                <input type="text" id="upiIdInput" placeholder="yourname@okaxis" value="karthik@okhdfcbank">
+                <button class="btn btn-outline-sm" onclick="showToast('UPI ID Verified successfully! ✅', 'success')">Verify</button>
+              </div>
+            </div>
+
+            <!-- Simulated QR Code -->
+            <div class="upi-qr-box">
+              <div class="qr-code-graphic">
+                <svg viewBox="0 0 100 100" width="100" height="100">
+                  <rect width="100" height="100" fill="#ffffff" />
+                  <rect x="10" y="10" width="25" height="25" fill="#0f172a" />
+                  <rect x="15" y="15" width="15" height="15" fill="#ffffff" />
+                  <rect x="65" y="10" width="25" height="25" fill="#0f172a" />
+                  <rect x="70" y="15" width="15" height="15" fill="#ffffff" />
+                  <rect x="10" y="65" width="25" height="25" fill="#0f172a" />
+                  <rect x="15" y="70" width="15" height="15" fill="#ffffff" />
+                  <circle cx="50" cy="50" r="12" fill="#ef4444" />
+                  <rect x="45" y="20" width="10" height="15" fill="#0f172a"/>
+                  <rect x="25" y="45" width="15" height="10" fill="#0f172a"/>
+                  <rect x="65" y="45" width="15" height="10" fill="#0f172a"/>
+                  <rect x="45" y="70" width="10" height="15" fill="#0f172a"/>
+                </svg>
+              </div>
+              <div class="qr-text">
+                <small>Scan and pay with any UPI App</small>
+                <strong>NammaBite Merchant QR</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Tab 2: Credit / Debit Cards -->
+          <div class="pay-tab-content" id="payTab-card">
+            <div class="card-form">
+              <div class="form-group">
+                <label>Card Number</label>
+                <div class="card-input-with-brands">
+                  <input type="text" id="cardNumberInput" placeholder="4532 •••• •••• 8921" value="4532 8901 2345 8921">
+                  <span class="card-brand-badge">VISA</span>
+                </div>
+              </div>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>Valid Thru (MM/YY)</label>
+                  <input type="text" id="cardExpiryInput" placeholder="12/28" value="08/29">
+                </div>
+                <div class="form-group">
+                  <label>CVV</label>
+                  <input type="password" id="cardCvvInput" maxlength="4" placeholder="•••" value="882">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Cardholder Name</label>
+                <input type="text" id="cardNameInput" placeholder="Name on card" value="Karthik Raja">
+              </div>
+              <button class="btn btn-outline-sm btn-block" onclick="autofillTestCard()">🎲 Autofill Demo Test Card</button>
+            </div>
+          </div>
+
+          <!-- Payment Tab 3: Wallets / NetBanking -->
+          <div class="pay-tab-content" id="payTab-wallets">
+            <label class="section-label">Select Net Banking Bank:</label>
+            <div class="banks-grid">
+              <label class="bank-pill active"><input type="radio" name="bank" checked> HDFC Bank</label>
+              <label class="bank-pill"><input type="radio" name="bank"> State Bank of India</label>
+              <label class="bank-pill"><input type="radio" name="bank"> ICICI Bank</label>
+              <label class="bank-pill"><input type="radio" name="bank"> Axis Bank</label>
+            </div>
+            <label class="section-label" style="margin-top: 15px;">Or Select Wallet:</label>
+            <div class="banks-grid">
+              <label class="bank-pill"><input type="radio" name="wallet"> Paytm Wallet</label>
+              <label class="bank-pill"><input type="radio" name="wallet"> Amazon Pay</label>
+              <label class="bank-pill"><input type="radio" name="wallet"> Mobikwik</label>
+            </div>
+          </div>
+
+          <!-- Payment Tab 4: Cash on Delivery -->
+          <div class="pay-tab-content" id="payTab-cod">
+            <div class="cod-banner">
+              <span class="cod-icon">💵</span>
+              <div class="cod-info">
+                <h4>Cash on Delivery Available</h4>
+                <p>Pay with cash or scan the delivery partner's QR code upon arrival at your doorstep.</p>
+                <small class="text-muted">Exact cash helps our rider deliver faster.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Processing State (Hidden initially) -->
+        <div class="payment-processing-overlay" id="paymentProcessingScreen" style="display: none;">
+          <div class="spinner-ring"></div>
+          <h3 id="paymentProcessStatusTitle">Contacting Payment Gateway...</h3>
+          <p id="paymentProcessStatusDesc">Please do not refresh or close this window.</p>
+        </div>
+      </div>
+
+      <div class="payment-modal-footer">
+        <button class="btn btn-secondary" onclick="closePaymentModal()">Cancel</button>
+        <button class="btn btn-primary btn-pay-action" id="confirmPaymentBtn" onclick="executePayment()">
+          <span id="btnPayAmount">Pay ₹485.00</span>
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODULE 2: RESTAURANT PARTNER MODULE                                       -->
+  <!-- ========================================================================= -->
+  <main class="app-module" id="module-restaurant">
+    <div class="section-container partner-container">
+      
+      <!-- Partner Top Header Bar -->
+      <div class="partner-top-header">
+        <div class="partner-identity">
+          <div class="partner-icon">🍳</div>
+          <div>
+            <div class="badge-role">RESTAURANT PARTNER PORTAL</div>
+            <h1 id="partnerPortalRestTitle">Thalappakatti Royal Biryani</h1>
+            <span class="partner-sub">Outlet ID: #TN-CHN-782 • Status: <strong class="text-green">Accepting Orders</strong></span>
+          </div>
+        </div>
+
+        <!-- Switch Restaurant Dropdown (for testing different kitchens) -->
+        <div class="partner-switch-rest">
+          <label>Manage Restaurant:</label>
+          <select id="partnerRestSelector" onchange="changeManagedRestaurant(this.value)">
+            <!-- Populated via JavaScript -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Partner Quick Analytics Metrics Cards -->
+      <div class="kpi-metrics-grid">
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Today's Total Sales</span>
+            <div class="kpi-icon bg-green">₹</div>
+          </div>
+          <h2 id="partnerMetricSales">₹18,450</h2>
+          <span class="kpi-delta positive">↑ 18.2% vs yesterday</span>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Total Orders Today</span>
+            <div class="kpi-icon bg-blue">📦</div>
+          </div>
+          <h2 id="partnerMetricOrders">32 Orders</h2>
+          <span class="kpi-delta positive">4 currently active</span>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Average Prep Time</span>
+            <div class="kpi-icon bg-orange">⏱️</div>
+          </div>
+          <h2>18 Mins</h2>
+          <span class="kpi-delta">⚡ Excellent performance</span>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Customer Rating</span>
+            <div class="kpi-icon bg-yellow">★</div>
+          </div>
+          <h2 id="partnerMetricRating">4.7 / 5.0</h2>
+          <span class="kpi-delta">Based on 1,420 customer reviews</span>
+        </div>
+      </div>
+
+      <!-- Partner Tab Navigation -->
+      <div class="partner-tabs-nav">
+        <button class="partner-tab-btn active" onclick="switchPartnerTab('orders', this)">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="m9 15 2 2 4-4"/></svg>
+          Live Orders Dashboard
+          <span class="badge-tab-count" id="partnerLiveOrderCount">0</span>
+        </button>
+        <button class="partner-tab-btn" onclick="switchPartnerTab('menu', this)">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+          Menu Management (CRUD)
+        </button>
+        <button class="partner-tab-btn" onclick="switchPartnerTab('analytics', this)">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          Dishes Analytics & Reports
+        </button>
+      </div>
+
+      <!-- Partner Tab 1: Live Orders Dashboard -->
+      <div class="partner-tab-content active" id="partnerTab-orders">
+        <div class="orders-board-header">
+          <h3>Incoming Customer Orders</h3>
+          <span class="subtext">Accept orders, move them to cooking, and dispatch to delivery partner.</span>
+        </div>
+
+        <div class="partner-orders-grid" id="partnerOrdersList">
+          <!-- Populated dynamically -->
+        </div>
+
+        <div class="empty-state" id="partnerNoOrdersState" style="display: none;">
+          <div class="empty-icon">🍳</div>
+          <h3>No pending orders right now</h3>
+          <p>Switch to Customer App, place an order, and watch it pop up here in real time!</p>
+          <button class="btn btn-primary" onclick="switchRole('customer')">Go Place an Order →</button>
+        </div>
+      </div>
+
+      <!-- Partner Tab 2: Menu Management (CRUD) -->
+      <div class="partner-tab-content" id="partnerTab-menu">
+        <div class="menu-mgmt-header">
+          <div>
+            <h3>Menu Dishes & Pricing Catalog</h3>
+            <span class="subtext">Add new items, update prices in real time, or toggle item out of stock.</span>
+          </div>
+          <button class="btn btn-primary" onclick="openAddDishModal()">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add New Dish Item
+          </button>
+        </div>
+
+        <!-- Menu Table -->
+        <div class="table-responsive">
+          <table class="data-table" id="partnerMenuTable">
+            <thead>
+              <tr>
+                <th>Item Details</th>
+                <th>Category</th>
+                <th>Type</th>
+                <th>Price (₹)</th>
+                <th>Availability</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="partnerMenuTableBody">
+              <!-- Populated dynamically via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Partner Tab 3: Analytics -->
+      <div class="partner-tab-content" id="partnerTab-analytics">
+        <div class="analytics-layout">
+          <div class="analytics-card">
+            <h3>Top Selling Dishes</h3>
+            <p class="subtext">Highest volume dishes ordered this month</p>
+            <div class="top-dishes-ranking" id="topDishesRanking">
+              <!-- Dynamic -->
+            </div>
+          </div>
+          <div class="analytics-card">
+            <h3>Sales Performance Breakdown</h3>
+            <div class="analytics-stat-row">
+              <span>Gross Food Sales:</span>
+              <strong id="analyticsGrossSales">₹18,450.00</strong>
+            </div>
+            <div class="analytics-stat-row">
+              <span>Commission Deducted (15%):</span>
+              <strong class="text-danger" id="analyticsCommission">₹2,767.50</strong>
+            </div>
+            <div class="analytics-stat-row">
+              <span>Net Payout to Restaurant:</span>
+              <strong class="text-green" id="analyticsNetPayout">₹15,682.50</strong>
+            </div>
+            <hr>
+            <div class="payout-badge">
+              <span>Next Payout Scheduled: <strong>Tomorrow, 10:00 AM via NEFT</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- MODULE 3: SUPER ADMIN MODULE                                              -->
+  <!-- ========================================================================= -->
+  <main class="app-module" id="module-admin">
+    <div class="section-container admin-container">
+      
+      <!-- Admin Header -->
+      <div class="admin-top-header">
+        <div class="admin-identity">
+          <div class="admin-icon">🛡️</div>
+          <div>
+            <div class="badge-role badge-admin">PLATFORM SUPER ADMIN CONTROL CENTER</div>
+            <h1>Executive Operations Dashboard</h1>
+            <span class="partner-sub">Real-time GMV tracking, restaurant onboarding, commissions & customer complaints.</span>
+          </div>
+        </div>
+        <div class="admin-quick-actions">
+          <button class="btn btn-outline-sm" onclick="resetToDefaultData()">
+            🔄 Reset Demo Seed Data
+          </button>
+        </div>
+      </div>
+
+      <!-- Admin Platform KPI Cards -->
+      <div class="kpi-metrics-grid">
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Platform GMV (Gross Merchandise Value)</span>
+            <div class="kpi-icon bg-green">₹</div>
+          </div>
+          <h2 id="adminTotalGmv">₹42,850</h2>
+          <span class="kpi-delta positive">All network orders combined</span>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Platform Commission Earnings</span>
+            <div class="kpi-icon bg-orange">💰</div>
+          </div>
+          <h2 id="adminPlatformRevenue">₹6,427</h2>
+          <span class="kpi-delta positive" id="adminCommissionRateLabel">At 15% Platform Commission</span>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Total Orders Processed</span>
+            <div class="kpi-icon bg-blue">📈</div>
+          </div>
+          <h2 id="adminTotalOrders">118 Orders</h2>
+          <span class="kpi-delta">99.4% fulfillment success</span>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Partner Restaurants</span>
+            <div class="kpi-icon bg-yellow">🏬</div>
+          </div>
+          <h2 id="adminActiveRestCount">4 Active</h2>
+          <span class="kpi-delta positive">100% health index</span>
+        </div>
+      </div>
+
+      <!-- Commission Control Card -->
+      <div class="commission-config-card">
+        <div class="config-header">
+          <div>
+            <h3>Platform Commission & Fee Setup</h3>
+            <span class="subtext">Dynamically adjust the percentage commission charged to restaurant partners.</span>
+          </div>
+          <div class="config-current-rate">
+            <span class="rate-badge" id="rateBadgeDisplay">15% Commission</span>
+          </div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" id="commissionRangeSlider" min="5" max="30" step="1" value="15" oninput="handleCommissionChange(this.value)">
+          <div class="slider-ticks">
+            <span>5% (Budget Tier)</span>
+            <span>15% (Standard Default)</span>
+            <span>30% (Premium Concierge)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Sub-Tabs -->
+      <div class="partner-tabs-nav">
+        <button class="partner-tab-btn active" onclick="switchAdminTab('restaurants', this)">
+          🏬 Manage Restaurants (<span id="adminRestTableCount">4</span>)
+        </button>
+        <button class="partner-tab-btn" onclick="switchAdminTab('users', this)">
+          👥 Registered Users & Orders
+        </button>
+        <button class="partner-tab-btn" onclick="switchAdminTab('complaints', this)">
+          🎧 Customer Complaints & Refunds (<span id="adminComplaintCount">2</span>)
+        </button>
+      </div>
+
+      <!-- Admin Tab 1: Manage Restaurants -->
+      <div class="admin-tab-content active" id="adminTab-restaurants">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Restaurant Name</th>
+                <th>Location</th>
+                <th>Rating</th>
+                <th>Commission Tier</th>
+                <th>Account Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="adminRestaurantsTableBody">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Tab 2: Users -->
+      <div class="admin-tab-content" id="adminTab-users">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>User Details</th>
+                <th>Primary Location</th>
+                <th>Total Orders Placed</th>
+                <th>Verification</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="adminUsersTableBody">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Tab 3: Complaints & Refunds -->
+      <div class="admin-tab-content" id="adminTab-complaints">
+        <div class="complaints-list" id="adminComplaintsList">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- REUSABLE MODALS: Auth, Add Dish, Review, Invoice                          -->
+  <!-- ========================================================================= -->
+
+  <!-- Modal: User Authentication (Login / Register / OTP) -->
+  <div class="generic-modal-overlay" id="authModal">
+    <div class="generic-modal-dialog auth-dialog">
+      <button class="modal-close-btn-rel" onclick="toggleAuthModal()">✕</button>
+      <div class="auth-tabs">
+        <button class="auth-tab-btn active" onclick="switchAuthTab('login', this)">Log In</button>
+        <button class="auth-tab-btn" onclick="switchAuthTab('signup', this)">Sign Up</button>
+        <button class="auth-tab-btn" onclick="switchAuthTab('otp', this)">Mobile OTP</button>
+      </div>
+
+      <!-- Login Tab -->
+      <div class="auth-tab-body active" id="authTab-login">
+        <form onsubmit="handleEmailLogin(event)">
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="loginEmail" required value="karthik@example.com" placeholder="name@email.com">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="loginPassword" required value="password123" placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Log In to ZestyBite</button>
+          <div class="demo-login-hint">
+            <small>💡 Quick Demo: Click Log In directly with prefilled credentials.</small>
+          </div>
+        </form>
+      </div>
+
+      <!-- Signup Tab -->
+      <div class="auth-tab-body" id="authTab-signup">
+        <form onsubmit="handleSignup(event)">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="signupName" required placeholder="Karthik Raja">
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="signupEmail" required placeholder="name@email.com">
+          </div>
+          <div class="form-group">
+            <label>Mobile Number</label>
+            <input type="tel" id="signupPhone" required placeholder="+91 98401 23456">
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Create Free Account</button>
+        </form>
+      </div>
+
+      <!-- OTP Tab -->
+      <div class="auth-tab-body" id="authTab-otp">
+        <div id="otpStep1">
+          <div class="form-group">
+            <label>Enter 10-Digit Mobile Number</label>
+            <input type="tel" id="otpMobileInput" value="9840123456" placeholder="98401 23456">
+          </div>
+          <button class="btn btn-primary btn-block" onclick="sendOtpCode()">Send 4-Digit OTP</button>
+        </div>
+        <div id="otpStep2" style="display: none;">
+          <div class="otp-instruction">
+            <p>Enter the 4-digit code sent to your phone</p>
+            <span class="otp-hint-badge">Demo OTP: <strong>1234</strong></span>
+          </div>
+          <div class="otp-inputs-row">
+            <input type="text" maxlength="1" class="otp-cell" value="1">
+            <input type="text" maxlength="1" class="otp-cell" value="2">
+            <input type="text" maxlength="1" class="otp-cell" value="3">
+            <input type="text" maxlength="1" class="otp-cell" value="4">
+          </div>
+          <button class="btn btn-primary btn-block" onclick="verifyOtpCode()">Verify & Login</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Add New Dish (Restaurant Partner) -->
+  <div class="generic-modal-overlay" id="addDishModal">
+    <div class="generic-modal-dialog">
+      <button class="modal-close-btn-rel" onclick="closeAddDishModal()">✕</button>
+      <div class="modal-header-simple">
+        <h3>Add New Dish to Menu</h3>
+        <p class="subtext">Add an enticing food item with image and pricing</p>
+      </div>
+      <form onsubmit="handleAddNewDish(event)">
+        <div class="form-group">
+          <label>Dish Name *</label>
+          <input type="text" id="newDishName" required placeholder="e.g. Mutton Chukka Biryani">
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Category *</label>
+            <select id="newDishCategory">
+              <option value="Starters">Starters</option>
+              <option value="Main Course" selected>Main Course</option>
+              <option value="Breads & Rice">Breads & Rice</option>
+              <option value="Desserts">Desserts</option>
+              <option value="Beverages">Beverages</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Food Type *</label>
+            <select id="newDishVeg">
+              <option value="veg">Pure Veg 🟢</option>
+              <option value="non-veg" selected>Non-Veg 🔴</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Price (₹) *</label>
+            <input type="number" id="newDishPrice" min="10" required placeholder="280">
+          </div>
+          <div class="form-group">
+            <label>Preparation Time</label>
+            <input type="text" id="newDishPrepTime" value="20 mins" placeholder="20 mins">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description *</label>
+          <textarea id="newDishDesc" rows="2" placeholder="Tender mutton slow-cooked with aromatic spices and seeraga samba rice..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Photo Image URL (or choose preset):</label>
+          <input type="url" id="newDishImage" value="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=400&q=80">
+          <div class="preset-images-picker">
+            <button type="button" class="btn-preset-img" onclick="setPresetDishImg('biryani')">Biryani</button>
+            <button type="button" class="btn-preset-img" onclick="setPresetDishImg('pizza')">Pizza</button>
+            <button type="button" class="btn-preset-img" onclick="setPresetDishImg('burger')">Burger</button>
+            <button type="button" class="btn-preset-img" onclick="setPresetDishImg('dessert')">Dessert</button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Save and Add to Menu</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Rate & Review Order -->
+  <div class="generic-modal-overlay" id="reviewModal">
+    <div class="generic-modal-dialog">
+      <button class="modal-close-btn-rel" onclick="closeReviewModal()">✕</button>
+      <div class="modal-header-simple">
+        <h3>Rate Your Food & Delivery</h3>
+        <p class="subtext">How was your dining experience with us today?</p>
+      </div>
+      <form onsubmit="submitCustomerReview(event)">
+        <div class="star-rating-selector" id="starRatingGroup">
+          <span class="star-btn active" data-val="1" onclick="setStarRating(1)">★</span>
+          <span class="star-btn active" data-val="2" onclick="setStarRating(2)">★</span>
+          <span class="star-btn active" data-val="3" onclick="setStarRating(3)">★</span>
+          <span class="star-btn active" data-val="4" onclick="setStarRating(4)">★</span>
+          <span class="star-btn active" data-val="5" onclick="setStarRating(5)">★</span>
+        </div>
+        <div class="rating-feedback-label" id="ratingFeedbackText">5 Stars - Outstanding meal & fast delivery!</div>
+        <div class="form-group" style="margin-top: 15px;">
+          <label>Your Review Comments:</label>
+          <textarea id="reviewCommentInput" rows="3" placeholder="Tell us about the taste, packaging, and rider politeness..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Submit Verified Review</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Tax Invoice Preview & Print -->
+  <div class="generic-modal-overlay" id="invoiceModal">
+    <div class="generic-modal-dialog invoice-dialog">
+      <div class="invoice-actions-top">
+        <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Download PDF</button>
+        <button class="modal-close-btn-rel" onclick="closeInvoiceModal()">✕</button>
+      </div>
+
+      <div class="tax-invoice-sheet" id="invoicePrintArea">
+        <div class="invoice-header">
+          <div class="invoice-brand">
+            <h2>NammaBite Delivery Network</h2>
+            <small>GSTIN: 33AAACZ9482L1ZX • FSSAI Lic: 12421008000492</small>
+            <p>DLF Cybercity, Ramapuram, Chennai - 600089</p>
+          </div>
+          <div class="invoice-meta-right">
+            <h3>TAX INVOICE</h3>
+            <p>Invoice No: <strong id="invNum">INV-2026-9810</strong></p>
+            <p>Date: <span id="invDate">26 Sep 2026</span></p>
+            <p>Payment Mode: <strong id="invPayMode">UPI (Verified)</strong></p>
+          </div>
+        </div>
+        <hr>
+        <div class="invoice-parties">
+          <div>
+            <strong>Restaurant Partner:</strong>
+            <p id="invRestName">Thalappakatti Royal Biryani</p>
+            <small id="invRestLoc">Anna Nagar, Chennai</small>
+          </div>
+          <div>
+            <strong>Billed To Customer:</strong>
+            <p id="invCustName">Karthik Raja</p>
+            <small id="invCustAddress">Flat 402, Royal Palms, Anna Nagar, Chennai</small>
+          </div>
+        </div>
+        <table class="invoice-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Item Description</th>
+              <th>Qty</th>
+              <th>Unit Price</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody id="invoiceTableBody">
+            <!-- Dynamic -->
+          </tbody>
+        </table>
+        <div class="invoice-totals">
+          <div class="inv-row"><span>Item Subtotal:</span><span id="invSubtotal">₹450.00</span></div>
+          <div class="inv-row"><span>Delivery Charges:</span><span id="invDelivery">₹35.00</span></div>
+          <div class="inv-row"><span>Platform Handling:</span><span>₹5.00</span></div>
+          <div class="inv-row"><span>GST @ 5%:</span><span id="invGst">₹22.50</span></div>
+          <div class="inv-row text-green"><span>Coupon Discount:</span><span id="invDiscount">-₹50.00</span></div>
+          <hr>
+          <div class="inv-row inv-grand"><span>Total Amount Paid:</span><strong id="invTotal">₹462.50</strong></div>
+        </div>
+        <div class="invoice-footer-note">
+          <p>Thank you for ordering with NammaBite! This is a computer-generated tax invoice and requires no physical signature.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Toast Notification Banner -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Bottom Floating Cart Bar for Mobile & Quick Access -->
+  <div class="floating-cart-pill" id="floatingCartPill" style="display: none;" onclick="openCartDrawer()">
+    <div class="pill-left">
+      <span class="pill-count-badge" id="floatPillCount">2 items</span>
+      <span class="pill-divider">|</span>
+      <strong id="floatPillTotal">₹485</strong>
+    </div>
+    <div class="pill-right">
+      <span>View Cart & Checkout</span>
+      <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+    </div>
+  </div>
+
+  <!-- Footer Section -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-col brand-col">
+        <div class="nav-brand">
+          <div class="brand-logo-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+          </div>
+          <span class="brand-name"><span class="highlight">NammaBite</span></span>
+        </div>
+        <p>A complete full-stack architectural showcase for Online Food Ordering & Delivery platforms.</p>
+        <div class="portfolio-credits">
+          <span>Engineered for GitHub Portfolio Showcase</span>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Ecosystem Modules</h4>
+        <ul>
+          <li><a href="#" onclick="switchRole('customer'); return false;">Customer Ordering App</a></li>
+          <li><a href="#" onclick="switchRole('restaurant'); return false;">Restaurant Partner Portal</a></li>
+          <li><a href="#" onclick="switchRole('admin'); return false;">Super Admin Operations</a></li>
+          <li><a href="#" onclick="showOrderTrackingView(); return false;">Live Order Tracking</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Tech Stack Highlights</h4>
+        <ul>
+          <li>Semantic HTML5 & Modern CSS3 Grid/Flex</li>
+          <li>Reactive State Management with LocalStorage</li>
+          <li>SVG Dynamic Route Tracking & Map Simulator</li>
+          <li>Interactive Payment Gateway Simulation</li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Supported Cities</h4>
+        <p>Chennai • Bengaluru • Hyderabad • Mumbai • Delhi NCR • Pune</p>
+        <div class="fssai-pill">FSSAI License: 12421008000492</div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-bottom-container">
+        <p>© 2026 NammaBite Technologies Ltd. All rights reserved. Open-source portfolio demonstration.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Main JavaScript App Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
